@@ -1,11 +1,6 @@
-import styled, { createGlobalStyle } from "styled-components";
-import { ThemeProvider } from 'styled-components';
+import { createGlobalStyle } from 'styled-components';
 
-import { useRecoilValue } from "recoil";
-import ToDoList from "./ToDoList";
-
-
-
+import ToDoList from './components/ToDoList';
 
 const GlobalStyle = createGlobalStyle`
 
@@ -121,16 +116,30 @@ body{
 a{
   text-decoration: none;
 }
-`
+input {
+  background-color: white;
+  color: black;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+button {
+  background-color: #b0b0b0;
+  color: white;
+  padding: 8px 16px;
+  border: 1px solid #666666;
+  border-radius: 4px;
+  cursor: pointer;
+}
+`;
 
 function App() {
-
-    return (
-        <>
-        <GlobalStyle/>
-
-        </>
-    );
+  return (
+    <>
+      <GlobalStyle />
+      <ToDoList />
+    </>
+  );
 }
 
 export default App;
