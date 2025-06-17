@@ -118,14 +118,14 @@ a{
 }
 input {
   background-color: white;
-  color: black;
+  color: #1a1a1a;
   padding: 8px 12px;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
 button {
   background-color: #b0b0b0;
-  color: white;
+  color: #1a1a1a;
   padding: 8px 16px;
   border: 1px solid #666666;
   border-radius: 4px;

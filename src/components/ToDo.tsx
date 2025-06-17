@@ -1,8 +1,93 @@
+import styled from 'styled-components';
 import { useSetRecoilState } from 'recoil';
 import { IToDo, toDoState } from '../atoms';
 
+const TodoItem = styled.li`
+  background-color: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: #4caf50;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+`;
+
+const TodoContent = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+`;
+
+const TodoText = styled.span`
+  font-size: 18px;
+  color: #1a1a1a;
+  flex: 1;
+  word-break: break-word;
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+`;
+
+const ActionButton = styled.button<{ variant: 'todo' | 'doing' | 'done' }>`
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+
+  ${({ variant }) => {
+    switch (variant) {
+      case 'todo':
+        return `
+          background-color: #6c757d;
+          color: white;
+          &:hover { background-color: #5a6268; }
+        `;
+      case 'doing':
+        return `
+          background-color: #007bff;
+          color: white;
+          &:hover { background-color: #0056b3; }
+        `;
+      case 'done':
+        return `
+          background-color: #28a745;
+          color: white;
+          &:hover { background-color: #1e7e34; }
+        `;
+    }
+  }}
+
+  &:active {
+    transform: translateY(1px);
+  }
+`;
+
+const EmptyMessage = styled.div`
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+  font-size: 16px;
+  background-color: #f0f0f0;
+  border-radius: 12px;
+  border: 2px dashed #ccc;
+`;
+
 function ToDo({ text, category, id }: IToDo) {
   const setToDos = useSetRecoilState(toDoState);
+
   const onClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     const {
       currentTarget: { name },
@@ -17,25 +102,30 @@ function ToDo({ text, category, id }: IToDo) {
       ];
     });
   };
+
   return (
-    <li>
-      <span>{text}</span>
-      {category !== 'DOING' && (
-        <button name="DOING" onClick={onClick}>
-          Doing
-        </button>
-      )}
-      {category !== 'TO_DO' && (
-        <button name="TO_DO" onClick={onClick}>
-          To Do
-        </button>
-      )}
-      {category !== 'DONE' && (
-        <button name="DONE" onClick={onClick}>
-          Done
-        </button>
-      )}
-    </li>
+    <TodoItem>
+      <TodoContent>
+        <TodoText>{text}</TodoText>
+        <ButtonGroup>
+          {category !== 'DOING' && (
+            <ActionButton name="DOING" onClick={onClick} variant="doing">
+              ⏳ Doing
+            </ActionButton>
+          )}
+          {category !== 'TO_DO' && (
+            <ActionButton name="TO_DO" onClick={onClick} variant="todo">
+              📋 To Do
+            </ActionButton>
+          )}
+          {category !== 'DONE' && (
+            <ActionButton name="DONE" onClick={onClick} variant="done">
+              ✅ Done
+            </ActionButton>
+          )}
+        </ButtonGroup>
+      </TodoContent>
+    </TodoItem>
   );
 }
 

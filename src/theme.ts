@@ -1,9 +1,9 @@
 export const darkTheme = {
-  bgColor: "#2f3640",
-  textColor: "#f5f6fa",
+  bgColor: '#1a1a1a',
+  textColor: '#ffffff',
 };
 
 export const lightTheme = {
-  bgColor: "#f5f6fa",
-  textColor: "#2f3640",
-}; 
+  bgColor: '#ffffff',
+  textColor: '#1a1a1a',
+};
