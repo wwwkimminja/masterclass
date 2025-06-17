@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import { useSetRecoilState } from 'recoil';
-import { IToDo, toDoState } from '../atoms';
+import { useSetRecoilState, useRecoilValue } from 'recoil';
+import { IToDo, toDoState, categoriesState } from '../atoms';
 
 const TodoItem = styled.li`
   background-color: white;
@@ -37,7 +37,7 @@ const ButtonGroup = styled.div`
   flex-wrap: wrap;
 `;
 
-const ActionButton = styled.button<{ variant: 'todo' | 'doing' | 'done' }>`
+const ActionButton = styled.button<{ bgColor: string }>`
   padding: 8px 16px;
   border: none;
   border-radius: 6px;
@@ -46,29 +46,12 @@ const ActionButton = styled.button<{ variant: 'todo' | 'doing' | 'done' }>`
   cursor: pointer;
   transition: all 0.2s;
   white-space: nowrap;
+  background-color: ${(props) => props.bgColor};
+  color: white;
 
-  ${({ variant }) => {
-    switch (variant) {
-      case 'todo':
-        return `
-          background-color: #6c757d;
-          color: white;
-          &:hover { background-color: #5a6268; }
-        `;
-      case 'doing':
-        return `
-          background-color: #007bff;
-          color: white;
-          &:hover { background-color: #0056b3; }
-        `;
-      case 'done':
-        return `
-          background-color: #28a745;
-          color: white;
-          &:hover { background-color: #1e7e34; }
-        `;
-    }
-  }}
+  &:hover {
+    opacity: 0.8;
+  }
 
   &:active {
     transform: translateY(1px);
@@ -87,6 +70,7 @@ const EmptyMessage = styled.div`
 
 function ToDo({ text, category, id }: IToDo) {
   const setToDos = useSetRecoilState(toDoState);
+  const categories = useRecoilValue(categoriesState);
 
   const onClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     const {
@@ -94,7 +78,7 @@ function ToDo({ text, category, id }: IToDo) {
     } = event;
     setToDos((oldToDos) => {
       const targetIndex = oldToDos.findIndex((toDo) => toDo.id === id);
-      const newToDo = { text, id, category: name as IToDo['category'] };
+      const newToDo = { text, id, category: name };
       return [
         ...oldToDos.slice(0, targetIndex),
         newToDo,
@@ -103,26 +87,29 @@ function ToDo({ text, category, id }: IToDo) {
     });
   };
 
+  const getCategoryName = (catId: string) => {
+    const category = categories.find((cat) => cat.id === catId);
+    return category ? category.name : catId;
+  };
+
   return (
     <TodoItem>
       <TodoContent>
         <TodoText>{text}</TodoText>
         <ButtonGroup>
-          {category !== 'DOING' && (
-            <ActionButton name="DOING" onClick={onClick} variant="doing">
-              ⏳ Doing
-            </ActionButton>
-          )}
-          {category !== 'TO_DO' && (
-            <ActionButton name="TO_DO" onClick={onClick} variant="todo">
-              📋 To Do
-            </ActionButton>
-          )}
-          {category !== 'DONE' && (
-            <ActionButton name="DONE" onClick={onClick} variant="done">
-              ✅ Done
-            </ActionButton>
-          )}
+          {categories.map((cat) => {
+            if (cat.id === category) return null;
+            return (
+              <ActionButton
+                key={cat.id}
+                name={cat.id}
+                onClick={onClick}
+                bgColor={cat.color}
+              >
+                {getCategoryName(cat.id)}
+              </ActionButton>
+            );
+          })}
         </ButtonGroup>
       </TodoContent>
     </TodoItem>

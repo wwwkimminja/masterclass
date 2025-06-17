@@ -1,7 +1,8 @@
 import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import { categoryState, toDoSelector } from '../atoms';
+import { categoryState, toDoSelector, categoriesState } from '../atoms';
 import CreateToDo from './CreateToDo';
+import CreateCategory from './CreateCategory';
 import ToDo from './ToDo';
 
 const Container = styled.div`
@@ -37,7 +38,7 @@ const CategorySelect = styled.select`
   font-size: 16px;
   background-color: white;
   cursor: pointer;
-  color:#555;
+  color: #555;
 
   &:focus {
     outline: none;
@@ -57,37 +58,35 @@ const TodoCount = styled.div`
 
 function ToDoList() {
   const toDos = useRecoilValue(toDoSelector);
+  const categories = useRecoilValue(categoriesState);
   const [category, setCategory] = useRecoilState(categoryState);
+
   const onInput = (event: React.FormEvent<HTMLSelectElement>) => {
     const {
       currentTarget: { value },
     } = event;
-    setCategory(value as any);
+    setCategory(value);
   };
 
-  const getCategoryDisplayName = (cat: string) => {
-    switch (cat) {
-      case 'TO_DO':
-        return 'To Do';
-      case 'DOING':
-        return 'Doing';
-      case 'DONE':
-        return 'Done';
-      default:
-        return cat;
-    }
+  const getCategoryDisplayName = (catId: string) => {
+    const category = categories.find((cat) => cat.id === catId);
+    return category ? category.name : catId;
   };
 
   return (
     <Container>
       <Title>📝 To Do List</Title>
 
+      <CreateCategory />
+
       <CategorySection>
         <CategoryLabel>Select Category:</CategoryLabel>
         <CategorySelect value={category} onInput={onInput}>
-          <option value="TO_DO">📋 To Do</option>
-          <option value="DOING">⏳ Doing</option>
-          <option value="DONE">✅ Done</option>
+          {categories.map((cat) => (
+            <option key={cat.id} value={cat.id}>
+              {cat.name}
+            </option>
+          ))}
         </CategorySelect>
       </CategorySection>
 
