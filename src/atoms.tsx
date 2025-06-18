@@ -12,6 +12,22 @@ export interface ICategory {
   color: string;
 }
 
+function localStorageEffect<T>(key: string) {
+  return ({ setSelf, onSet }: any) => {
+    const savedValue = localStorage.getItem(key);
+    if (savedValue != null) {
+      setSelf(JSON.parse(savedValue));
+    }
+    onSet((newValue: T, _unused: any, isReset: boolean) => {
+      if (isReset) {
+        localStorage.removeItem(key);
+      } else {
+        localStorage.setItem(key, JSON.stringify(newValue));
+      }
+    });
+  };
+}
+
 export const categoriesState = atom<ICategory[]>({
   key: 'categories',
   default: [
@@ -19,6 +35,7 @@ export const categoriesState = atom<ICategory[]>({
     { id: 'DOING', name: 'Doing', color: '#007bff' },
     { id: 'DONE', name: 'Done', color: '#28a745' },
   ],
+  effects_UNSTABLE: [localStorageEffect<ICategory[]>('categories')],
 });
 
 export const categoryState = atom<string>({
@@ -29,6 +46,7 @@ export const categoryState = atom<string>({
 export const toDoState = atom<IToDo[]>({
   key: 'toDo',
   default: [],
+  effects_UNSTABLE: [localStorageEffect<IToDo[]>('toDos')],
 });
 
 export const toDoSelector = selector({
